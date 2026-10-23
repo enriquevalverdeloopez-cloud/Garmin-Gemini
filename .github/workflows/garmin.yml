@@ -33,7 +33,7 @@ jobs:
           python daily_garmin_health.py
           python daily_garmin_activities.py
 
-    - name: Instalar Rclone y Subir a Drive
+      - name: Instalar Rclone y Subir a Drive
         run: |
           sudo curl https://rclone.org/install.sh | sudo bash
           mkdir -p ~/.config/rclone
