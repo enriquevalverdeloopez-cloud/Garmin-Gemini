@@ -30,8 +30,8 @@ jobs:
           SAVE_PATH: ./datos_garmin
           CHECK_MOUNT_STATUS: 'False'
         run: |
-          python daily_garmin_health.py
-          python daily_garmin_activities.py
+          python history_garmin_import.py
+          python history_garmin_activities.py
 
       - name: Instalar Rclone y Subir a Drive
         env:
@@ -39,5 +39,5 @@ jobs:
         run: |
           sudo curl -s https://rclone.org/install.sh | sudo bash
           mkdir -p ~/.config/rclone
-          echo "$CONF" > ~/.config/rclone/rclone.conf
+          python -c 'import os; f=open(os.path.expanduser("~/.config/rclone/rclone.conf"), "w"); f.write(os.environ.get("CONF", "")); f.close()'
           rclone copy ./datos_garmin gdrive:Datos_Garmin
