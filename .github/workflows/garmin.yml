@@ -1,0 +1,41 @@
+name: Extraer Datos Garmin
+
+on:
+  schedule:
+    - cron: '0 4 * * *'
+  workflow_dispatch:
+
+jobs:
+  sincronizar:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Clonar código
+        uses: actions/checkout@v4
+
+      - name: Configurar Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.10'
+
+      - name: Instalar dependencias
+        run: pip install -r requirements.txt
+
+      - name: Crear carpeta temporal
+        run: mkdir -p ./datos_garmin
+
+      - name: Extraer métricas y actividades
+        env:
+          GARMIN_EMAIL: ${{ secrets.GARMIN_EMAIL }}
+          GARMIN_PASSWORD: ${{ secrets.GARMIN_PASSWORD }}
+          SAVE_PATH: ./datos_garmin
+          CHECK_MOUNT_STATUS: 'False'
+        run: |
+          python daily_garmin_health.py
+          python daily_garmin_activities.py
+
+      - name: Subir a Google Drive
+        uses: devidw/rclone-action@v1
+        env:
+          RCLONE_CONF: ${{ secrets.RCLONE_CONF }}
+        with:
+          args: copy ./datos_garmin gdrive:Datos_Garmin
