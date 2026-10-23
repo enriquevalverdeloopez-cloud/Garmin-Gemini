@@ -23,10 +23,15 @@ jobs:
       - name: Crear carpeta temporal
         run: mkdir -p ./datos_garmin
 
-      - name: Extraer métricas y actividades
+      - name: Iniciar sesión en Garmin y generar tokens
         env:
           GARMIN_EMAIL: ${{ secrets.GARMIN_EMAIL }}
           GARMIN_PASSWORD: ${{ secrets.GARMIN_PASSWORD }}
+        run: |
+          python -c "import os; from garminconnect import Garmin; api = Garmin(os.environ['GARMIN_EMAIL'], os.environ['GARMIN_PASSWORD']); api.login(); api.garth.dump('.garth')"
+
+      - name: Extraer métricas y actividades
+        env:
           SAVE_PATH: ./datos_garmin
           CHECK_MOUNT_STATUS: 'False'
         run: |
