@@ -33,9 +33,9 @@ jobs:
           python daily_garmin_health.py
           python daily_garmin_activities.py
 
-      - name: Subir a Google Drive
-        uses: devidw/rclone-action@v1
-        env:
-          RCLONE_CONF: ${{ secrets.RCLONE_CONF }}
-        with:
-          args: copy ./datos_garmin gdrive:Datos_Garmin
+    - name: Instalar Rclone y Subir a Drive
+        run: |
+          sudo curl https://rclone.org/install.sh | sudo bash
+          mkdir -p ~/.config/rclone
+          echo "${{ secrets.RCLONE_CONF }}" > ~/.config/rclone/rclone.conf
+          rclone copy ./datos_garmin gdrive:Datos_Garmin
